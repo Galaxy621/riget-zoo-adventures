@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <title>Riget Zoo Adventures</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='favicon.ico')}}">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        {% block head %}{% endblock head %}
+    </head>
+
+    <body>
+        <header class="light-shadow">
+            <section class="header-container">
+                <div class="logo">
+                    <h1>Riget Zoo Adventures</h1>
+                    <img title="Website Logo" alt="Riget Zoo Adventures" src="{{url_for('static', filename='images/logo.png')}}">
+                </div>
+
+                <nav>
+                    <section id="nav-left" class="navbar">
+                        <a href="{{url_for('pages.index')}}"><p>Home</p></a>
+                        <a href="{{url_for('hotel.hotels')}}"><p>Hotels</p></a>
+                        <a href="{{url_for('pages.blogs')}}"><p>Blogs</p></a>
+                    </section>
+
+                    <section id="nav-right" class="navbar">
+                        {% if session["user"] %}
+                            {% if session["user"]["admin"] and blogID %}
+                                <a href="{{url_for('pages.admin', post_id = blogID)}}"><p>Edit</p></a>
+                            {% endif %}
+
+                            <a href="{{url_for('account.account')}}"><p>Account</p></a>
+                            <a class="logout-button" href="{{url_for('account.logout')}}"><p>Logout</p></a>
+      
+                        {% else %}
+                            <a class="login-button" href="{{url_for('account.login')}}"><p>Login</p></a>
+                            <a href="{{url_for('account.signup')}}"><p>Sign Up</p></a>
+                        {% endif %}
+                        <a href="{{url_for('hotel.book', hotel_id = 'safari')}}" class="book-button"><p>Book</p></a>
+                    </section>
+                </nav>
+
+            </section>
+        </header>
+        
+        <main id="main">
+            {% block main %}{% endblock main %}
+
+            {% block postmain %}{% endblock postmain %}
+        </main>
+        <footer></footer>
+
+        <script>
+        const DARK_MODE = `
+        
+    --header-colour: var(--header-colour-dark);
+    --header-text-colour: var(--header-text-colour-dark);
+    background-color: var(--background-colour-dark);
+`
+        const CUR_URI = encodeURIComponent(window.location.href);
+        $(".logout-button").attr("href", "{{url_for('account.logout')}}?redirect=" + CUR_URI);
+        $(".login-button").attr("href", "{{url_for('account.login')}}?redirect=" + CUR_URI);
+
+        function doError(errorMessage) {
+            $(".banner-error").remove()
+
+            const error = document.createElement("section");
+            error.classList.add("banner-error");
+
+            const errorContainer = document.createElement("section");
+            errorContainer.classList.add("banner-error-container");
+            error.appendChild(errorContainer);
+
+            const errorMessageP = document.createElement("p");
+            errorMessageP.textContent = errorMessage;
+            errorContainer.appendChild(errorMessageP);
+
+            $("main").prepend(error);
+            setTimeout(function() {
+                error.remove();
+            }, 5000)
+        }
+        </script>
+        {% block end_of_page %}{% endblock end_of_page %}
+    </body>
+
+</html>

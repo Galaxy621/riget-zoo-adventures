@@ -1,0 +1,11 @@
+{
+    "1.jpg" : {
+        "alt": "Indoor photo of a bedroom, with the bed queen-sized being the focus",
+        "title" : "Master Bedroom"
+    },
+
+    "2.jpg" : {
+        "alt": "Outdoor shot of swimming pool, with wooden decking and a ladder on the side",
+        "title" : "Swimming Pool"
+    }
+}

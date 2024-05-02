@@ -1,0 +1,177 @@
+{% extends "template.html.j2" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/hotelpage.css')}}">
+{% endblock head %}
+
+{% block main %}
+
+<section class="hotel-info">
+    <div class="hotel-info-container">
+        <div class="hotel-nav">
+            <a id="back" href="{{url_for('hotel.hotels')}}"><p><i class="fa fa-backward" aria-hidden="true"></i>  Go back - Hotels</p></a>
+        </div>
+
+        <div class="hotel-content">
+            <div class="hotel-info-left">
+                <h2>{{ hotel.name }}</h2>
+                <p>{{ hotel.description }}</p>
+                <img id="thumbnail" class="shadow" src="" title="" alt="">
+                <section class="thumbnails">
+                    {% for thumbnail in thumbnails %}
+                        <a onclick="selectThumb(
+                            '{{ thumbnail.link }}',
+                            '{{ thumbnail.title }}',
+                            '{{ thumbnail.alt }}')"
+                        ><img class="thumb" title="{{ thumbnail.title }}" src="{{thumbnail.link}}" alt="{{thumbnail.alt}}"></a>
+                    {% endfor %}
+                </section>
+            </div>
+
+                {% if session["user"] %}
+
+                <div class="hotel-info-right">
+
+                    <div class="booking light-shadow">
+                        <div class="booking-top">
+                            <h2>Booking</h2>
+                            <p class="price-container"><span class="price">{{hotel.formatted_price()}}</span> pp* - 1 night min. </p>
+                            <p>Max occupancy of <b>{{hotel.maxOccupants}}</b> {% if hotel.maxOccupants == 1 %}person{% else %}people{% endif %}</p>
+                        </div>
+
+
+                        <div class="booking-mid">
+                            <a href="{{url_for('hotel.book', hotel_id = hotel.roomID)}}" id="hotel-book-submission" type="button">
+                                <span class="button-text">
+                                    <p>Book</p>
+                                </span>
+                                <span class="button-arrow">
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </span>
+                            </a>
+                        </div>
+
+                        <div class="booking-bottom">
+                            <p>*price per person, per night. May differ if offers apply</p>
+                        </div>
+                    </div>
+
+                    <div class="availability light-shadow">
+                        <div class="availability-top">
+                            <h2>Availability</h2>
+                        </div>
+
+                        <div class="availability-mid">
+                            <div class="text-input">
+                                <p id="dobClick">Start Date</p>
+                                <input id="start-date" class="date-input" type="date" placeholder="" name="start-date">
+                            </div> 
+
+                            <div class="text-input">
+                                <p id="dobClick">End Date</p>
+                                <input id="end-date" class="date-input" type="date" placeholder="" name="end-date">
+                            </div>
+                        </div>
+
+                        <div class="availability-bottom">
+                            <p id="available-text"></p>
+
+                            <a id="available-submission" type="button">
+                                <span class="button-text">
+                                    <p>Check</p>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                {% else %}
+                <div class="hotel-info-right">
+                    <section class="minor-alert">
+                        <div class="minor-alert-container light-shadow">
+                            <p>Please <a class="login-button" href="{{url_for('account.login')}}">log in</a> to book a hotel.</p>
+                        </div>
+                    </section>
+                </div>
+                {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock main %}
+
+{% block end_of_page %}
+    <script>
+    const IMG_STORE = "{{url_for('static', filename='hotels/%s' % hotel.roomID)}}"
+
+    function selectThumb(thumbnail, title, alt) {
+        const thumb = $("#thumbnail");
+        thumb.attr("src", thumbnail);
+        thumb.attr("title", title);
+        thumb.attr("alt", alt);
+    }
+
+    function handleThumbInfo(info) {
+        var set = false;
+        Object.keys(info).forEach((key) => {
+            const imgURL = IMG_STORE + `/${key}`;
+
+            const anchor = document.createElement("a");
+            anchor.onclick = () => {
+                selectThumb(imgURL, info[key]["title"], info[key]["alt"]);
+            };
+
+            const image = document.createElement("img");
+            image.classList.add("thumb");
+            image.src = imgURL;
+            image.alt = info[key]["alt"];
+            image.title = info[key]["title"];
+
+            anchor.appendChild(image);
+            $(".thumbnails").append(anchor);
+
+            if (!set) {
+                set = true;
+                selectThumb(
+                    imgURL,
+                    info[key]["title"],
+                    info[key]["alt"]
+                )
+            }
+        })
+    }
+
+    fetch("{{thumbinfo}}").then((response) => response.json()).then(handleThumbInfo);
+
+    const hotel = "{{hotel}}";
+
+    function availability() {
+        var startDate = $("#start-date").val();
+        var endDate = $("#end-date").val();
+
+        var info = {
+            hotel: {{hotel.roomID}},
+            startDate: Date.parse($("#start-date").val()),
+            endDate: Date.parse($("#end-date").val()),
+        }
+
+        $.post("{{url_for('hotel.available')}}", info, (data, status) => {
+            console.log(data);
+            if (data["success"]) {
+                $("#available-text").text(data["value"] ? "Available" : "Not Available");
+                $("#available-text").attr("class", data["value"] ? "av" : "not-av");
+            } else {
+                $("#available-text").text("Error: " + data["reason"]);
+                $("#available-text").attr("class", "");
+
+            }
+        });
+
+        console.log(startDate, endDate);
+    }
+
+    $("#available-submission").on("click", availability)
+    </script>
+{% endblock end_of_page %}

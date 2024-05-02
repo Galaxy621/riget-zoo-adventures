@@ -1,0 +1,95 @@
+{% extends "template.html.j2" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/signup.css')}}">
+{% endblock head %}
+
+{% block main %}
+    <section class="main-outer">
+    <section class="main-container">
+        <section class="signup-form">
+
+            <div class="signup-header">
+                <div>
+                    <h2>Signup</h2>
+                </div>
+
+                <div class="signup-logo">
+                    <img title="Website Logo" alt="Riget Zoo Adventures" src="{{url_for('static', filename='images/logo-cropped.png')}}">
+                </div>
+
+            </div>
+
+            <div class="signup-input">
+                <div class="text-input">
+                    <input id="user-full-name" type="text" placeholder="Name" name="user-full-name">
+                </div> 
+
+                <div class="text-input">
+                    <input id="user-email" type="text" placeholder="Email" name="user-email">
+                </div> 
+
+                <div class="text-input">
+                    <p id="dobClick">Date of Birth</p>
+                    <input id="user-date" class="date-input" type="date" placeholder="Date of Birth" name="user-date">
+                </div> 
+
+                <div class="text-input">
+                    <input id="user-password" type="password" placeholder="Password" name="user-password">
+                </div> 
+
+                <div class="text-input last">
+                    <input id="user-password-confirm" type="password" placeholder="Confirm Password" name="user-password-confirm">
+                </div> 
+
+                <button id="confirm-signup" type="button">Signup</button>
+
+                <p>Already have an account? <a href="{{url_for('account.login')}}">Log in here!</a></p>
+            </div>
+
+        </section>
+    </section>
+</section>
+{% endblock main %}
+
+{% block end_of_page %}
+<script>
+function login() {
+    const email = $("#user-email").val();
+    const name = $("#user-full-name").val();
+    const dateOfBirth = $("#user-date").val();
+
+    const password = $("#user-password").val();
+    const confirmPassword = $("#user-password-confirm").val();
+
+    if (password != confirmPassword) {
+        doError("An error - Password does not match");
+        return;
+    }
+
+    $.post("{{url_for('account.signup')}}", {name: name, email: email, dateOfBirth: dateOfBirth, password: password},(data, status) => {
+        {# console.log(data) #}
+        if (data["success"] === true) {
+            document.location.href = "/";
+        } else {
+            doError("An error - " + data["reason"]);
+        }
+    });
+}
+
+function enterCheck(e) {
+    if (e.keyCode == 13) {
+        login(); 
+    }
+}
+
+$("#user-password-confirm").on("keyup", enterCheck)
+$("#confirm-signup").click(login);
+
+$("#dobClick").click(() => {
+    $("#dobClick").css("display", "none");
+    $("#user-date").css("display", "inline-block");
+    $("#user-date").focus();
+});
+</script>
+{% endblock end_of_page %}

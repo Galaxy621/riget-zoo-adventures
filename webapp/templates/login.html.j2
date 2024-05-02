@@ -1,0 +1,82 @@
+{% extends "template.html.j2" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/login.css')}}">
+{% endblock head %}
+
+{% block main %}
+<section class="main-outer">
+    <section class="main-container">
+        <section class="login-form">
+
+            <div class="login-header">
+                <div>
+                    <h2>Login</h2>
+                    <p>to access your account</p>
+                </div>
+
+                <div class="login-logo">
+                    <img title="Website Logo" alt="Riget Zoo Adventures" src="{{url_for('static', filename='images/logo-cropped.png')}}">
+                </div>
+
+            </div>
+
+            <div class="login-input">
+                <div class="text-input">
+                    <input id="user-email" type="text" placeholder="Email" name="user-email">
+                </div> 
+
+                <div class="text-input last">
+                    <input id="user-password" type="password" placeholder="Password" name="user-password">
+                </div> 
+
+                <button id="confirm-login" type="button">Login</button>
+
+                <p>Don't have an account? <a href="{{url_for('account.signup')}}">Register here!</a></p>
+                {# <p><a href="#">Forgot your password?</a></p> #}
+            </div>
+
+        </section>
+    </section>
+</section>
+
+{% endblock main %}
+
+{% block end_of_page %}
+<script>
+function login() {
+    const email = $("#user-email").val();
+    const password = $("#user-password").val();
+
+    $.post("{{url_for('account.login')}}", {email: email, password: password},(data, status) => {
+        if (data["success"] === true) {
+            console.log("{{session.get('last_page')}}")
+            document.location.href = '{{ session.get("last_page") }}';
+        } else {
+            doError("An error - " + data["reason"]);
+        }
+    });
+}
+
+$("#user-email").on("keyup", function(e) {
+    if (e.keyCode != 13) {
+        return; 
+    }
+
+    const pass = $("#user-password");
+    if (pass.val() == "") {
+        pass.focus();
+    } else {
+        login();
+    }
+});
+
+$("#user-password").on("keyup", function(e) {
+    if (e.keyCode == 13) {
+        login(); 
+    }
+});
+
+$("#confirm-login").click(login);
+</script>
+{% endblock end_of_page %}

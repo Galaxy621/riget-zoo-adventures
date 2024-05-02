@@ -1,0 +1,41 @@
+
+.banner {
+    width: 100%;
+    height: 640px;
+
+    background: url("/static/images/branding/giraffe-banner.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-container {
+    width: calc(var(--content-width) - 72px);
+    height: 75%;
+    padding: 36px;
+
+    font-family: var(--branded-font);
+    text-align: right;
+    
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+    
+    /* background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2); */
+}
+
+.banner-container > h2 {
+    font-size: 8em;
+}
+
+.banner-container > h3 {
+    font-size: 2em;
+}

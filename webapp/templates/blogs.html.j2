@@ -1,0 +1,29 @@
+{% set blogID = -1%}
+{% extends "template.html.j2" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/blog.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/blogs.css')}}">
+{% endblock %}
+
+{% block main %}
+
+<section class="blog-main">
+    <div class="blog-container">
+
+    {% for post in posts %}
+        <div id="{{post.postID}}" class="click light-shadow">
+            <p>Written by: {{post.get_author().name}}</p>
+            <h2>{{post.title}} - {{post.creationTime.date().strftime("%d/%m/%Y")}}</h2>
+        </div>
+    {% endfor %}
+    </div>
+</section>
+
+<script>
+$(".click").on("click", function(a) {
+    window.location.href = "{{url_for('pages.blogs')}}"+ a.currentTarget.id;
+})
+</script>
+
+{% endblock %}

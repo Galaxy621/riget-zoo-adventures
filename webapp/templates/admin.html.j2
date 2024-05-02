@@ -1,0 +1,54 @@
+{% extends "template.html.j2" %}
+
+{% set AUTHOR = session.user["name"] if not post else post.get_author().name %}
+{% set TITLE = "" if not post else post.title %}
+{% set CONTENTS = "" if not post else post.contents %}
+{% set CREATION = "New Post" if not post else post.creationTime.date().strftime("%d/%m/%Y")%}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/blog.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/admin.css')}}">
+{% endblock %}
+
+{% block main %}
+
+<section class="blog-main">
+    <div class="blog-container">
+    
+        <div class="light-shadow">
+            <p id="author">Written by: {{AUTHOR}}</p>
+            {% if post %}
+            <a href="{{url_for('pages.archive', post_id=post.postID)}}" id="archive">{% if post.unlisted %}Un-{% endif %}Archive</a>
+            <a href="{{url_for('pages.delete', post_id=post.postID)}}" id="delete">Delete</a>
+            {%endif%}
+            <input name="post-title" id="post-title" placeholder="Post title" value="{{TITLE}}" type="text">
+            <h2>{{CREATION}}</h2>
+        </div>
+
+        <div class="content light-shadow">
+            <textarea name="post-contents" id="post-contents" rows="16" cols="128">{{CONTENTS}}</textarea>
+            <button type="button" onclick="submit()">Submit</button>
+        </div>
+    </div>
+</section>
+
+<script>
+function submit() {
+    const contents = $("#post-contents").val();
+    const title = $("#post-title").val();
+
+    {% if post %}
+        $.post("{{url_for('pages.update', post_id = post.postID)}}", {title: title, contents: contents}, (data, status) => {
+            if (data == "success") { window.location.href = "{{url_for('pages.blog', post_id = post.postID)}}"}
+        })
+    {% else %}
+        $.post("{{url_for('pages.create')}}", {title: title, contents: contents}, (data, status) => {
+            if (data == "success") { window.location.href = "{{url_for('pages.blogs')}}"}
+        })
+    {% endif %}
+
+    console.log(title + " - " + contents);
+}
+</script>
+
+{% endblock main %}

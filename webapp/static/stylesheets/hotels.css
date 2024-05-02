@@ -1,0 +1,181 @@
+
+.banner {
+    width: 100%;
+    height: 640px;
+
+    background: url("/static/images/branding/meerkat-banner.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-container {
+    width: calc(var(--content-width) - 72px);
+    height: 75%;
+    padding: 36px;
+
+    font-family: var(--branded-font);
+    text-align: left;
+    color: aliceblue;
+
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+    
+    /* background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2); */
+}
+
+.banner-container > h2 {
+    font-size: 8em;
+}
+
+.banner-container > h3 {
+    font-size: 2em;
+}
+
+main {
+    background-color: aliceblue;
+    background: none;
+}
+
+.hotels {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hotels-container {
+    width: var(--content-width);
+}
+
+.hotel-grid-container {
+    display: grid;
+    padding: 12px;
+    text-align: center;
+    justify-content: center;
+
+    grid-template-columns: repeat(auto-fit, 312px);
+}
+
+.hotel-grid-container > div {
+    margin: 12px;
+    height: 480px;
+    background-color: rgb(240, 251, 255, 0.5);
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    transition: 0.1s;
+}
+
+.hotel-grid-container > div:hover {
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    margin: 8px;
+    padding: 4px;
+}
+
+.hotel-card {
+    border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.card-img {
+    display: block;
+    width: calc(100% - 24px);
+    height: 35%;
+    padding: 12px;
+    transition: 0.1s;
+    /* box-shadow: inset 0px -2em 20px -20px rgba(0, 0, 0, 0.315) */
+}
+
+.card-img > img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0px 0 4px rgba(0, 0, 0, 0.315);
+}
+
+.card-basic-info {
+    height: 35%;
+}
+
+.card-title {
+    font-size: larger;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-weight: normal;
+}
+
+.price {
+    color: rgb(13, 85, 167);
+    font-weight: bold;
+}
+
+.price-info {
+    margin-bottom: 24px;
+}
+
+.card-desc {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 50%;
+    align-items: center;
+}
+
+.card-desc > p {
+    width: 75%;
+}
+
+.card-buttons {
+    width: 100%;
+    height: 18%;
+    margin-top: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-buttons > a {
+    display: block;
+    text-decoration: none;
+    width: 96px;
+
+    padding: 0.75em;
+    margin: 0.25em;
+    border-radius: 8px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.visit-button {
+    background-color: lightgreen;
+    color: var(--text-colour);
+}
+
+.visit-button:hover { 
+    background-color: rgb(190, 247, 190);
+    color: var(--header-text-colour);
+}
+
+.book-button-card {
+    background-color: rgb(170, 197, 255);
+    color: rgb(0, 24, 51);
+}
+
+.book-button-card:hover {
+    background-color: rgb(170, 197, 255);
+    box-shadow: 0px 0px 10px rgba(60, 151, 255, 0.692);
+
+}

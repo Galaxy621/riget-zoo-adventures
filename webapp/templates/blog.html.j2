@@ -1,0 +1,24 @@
+{% set blogID = post.postID %}
+{% extends "template.html.j2" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/blog.css')}}">
+{% endblock %}
+
+{% block main %}
+
+<section class="blog-main">
+    <div class="blog-container">
+
+        <div class="light-shadow">
+            <p id="author">Written by: {{post.get_author().name}}</p>
+            <h2>{{post.title}} - {{post.creationTime.date().strftime("%d/%m/%Y")}}</h2>
+        </div>
+
+        <div class="light-shadow">
+            {{ blog_txt }}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

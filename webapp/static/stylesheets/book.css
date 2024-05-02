@@ -1,0 +1,101 @@
+.booking-info {
+    text-align: center;
+    width: 100%;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+
+.booking-content {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    transition: 0.5s;
+}
+
+.small {
+    width: calc(var(--content-width) * 0.925) !important;
+}
+
+.booking-content > div {
+    display: block;
+    width: var(--content-width);
+    margin-top: 16px;
+    justify-content: space-between;
+
+    margin: 12px;
+    padding: 12px;
+    background-color: rgb(240, 251, 255, 0.5);
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+
+    transition: 0.5s;
+
+}
+
+.booking-content > div > p {
+    margin-bottom: 8px;
+}
+
+.text-input {
+    width: 100%;
+    height: 36px;
+    border-bottom: solid 2px var(--header-background);
+    background-color: transparent;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.text-input > input[type="text"] {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    font-size: medium;
+}
+
+.text-input > p {
+    width: 45%;
+}
+
+button {
+    padding: 12px 24px;
+    background-color: rgb(170, 197, 255);
+    color: rgb(0, 24, 51);
+    border-radius: 8px;
+    float: right;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: rgb(170, 197, 255);
+    color: rgb(0, 24, 51);  
+    box-shadow: 0px 0px 10px rgba(60, 151, 255, 0.692);
+}
+
+.error-code {
+    display: none;
+    float: left;
+    font-size: small;
+    margin-bottom: 10px;
+    color: rgb(153, 65, 65);
+}
+
+.reference-code {
+    display: inline;
+    float: right;
+    font-size: small;
+    margin-bottom: 10px;
+    color: rgb(175, 175, 175);
+}
+
+h2 {
+    margin-bottom: 14px;
+    color: black;
+}
+
+#finished {
+    display: none;
+}

@@ -1,0 +1,86 @@
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    transition: 0.5s;
+}
+
+.small {
+    width: calc(var(--content-width) * 0.925) !important;
+}
+
+.content > div {
+    display: block;
+    width: var(--content-width);
+    margin-top: 16px;
+    justify-content: space-between;
+
+    margin: 12px;
+    padding: 12px;
+    background-color: rgb(240, 251, 255, 0.5);
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+
+    transition: 0.5s;
+
+}
+
+.content > div > p {
+    margin-bottom: 8px;
+}
+
+
+.booking-grid-container {
+    display: grid;
+    padding: 12px;
+    text-align: center;
+    justify-content: center;
+
+    grid-template-columns: repeat(auto-fit, 256px);
+}
+
+.booking-grid-container > div {
+    margin: 12px;
+    padding: 12px;
+    height: 200px;
+    background-color: rgb(240, 251, 255, 0.5);
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    transition: 0.1s;
+}
+
+.booking-grid-container > div:hover {
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.card {
+    border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.ref {
+    margin-bottom: 16px !important;
+}
+
+.card > p {
+    margin-bottom: 4px;
+}
+
+.card > a {
+    margin: 16px;
+    padding: 8px;
+    display: block;
+    color: white;
+    border: 2px solid salmon;
+    background-color:rgb(255, 107, 107);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.card > a:hover {
+    background-color:rgb(255, 137, 137);
+}
+

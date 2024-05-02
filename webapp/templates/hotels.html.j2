@@ -1,0 +1,117 @@
+{% extends "template.html.j2" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/hotels.css')}}">
+{% endblock head %}
+
+{% block main %}
+
+<section class="banner">
+    <section class="banner-container">
+        <h2>Quality Hotels</h2>
+        <h3>With Riget Zoo Adventures</h3>
+    </section>
+</section>
+
+<section class="hotels">
+    <div class="hotels-container">
+        <div class="hotel-grid-container">
+
+        </div>
+    </div>
+</section>
+
+{% endblock main %}
+
+{% block end_of_page %}
+<script>
+
+    const HOTEL_DATA_URL = "{{url_for('static', filename='hotels')}}";
+
+    function createCard(hotel_name, hotel_description, hotel_price, hotel_occupants, hotel_id) {
+        const baseCard = document.createElement("div");
+        baseCard.classList.add("hotel-card");
+        
+        const img_store = `${HOTEL_DATA_URL}/${hotel_id}`;
+        const hotel_info = `${HOTEL_DATA_URL}/${hotel_id}/info.json`;
+
+        let img_src = `${HOTEL_DATA_URL}/1/1.png`;
+
+        // Card Image
+        const cardImg = document.createElement("div");
+        cardImg.classList.add("card-img")
+        baseCard.appendChild(cardImg);
+
+        const imgObj = document.createElement("img");
+        imgObj.setAttribute("src", img_src);
+        cardImg.appendChild(imgObj);
+
+        fetch(hotel_info).then((response) => response.json()).then((val) => {
+            img_src = `${HOTEL_DATA_URL}/${hotel_id}/${Object.keys(val)[0]}`;
+            imgObj.setAttribute("src", img_src);
+        });
+
+        // Card Description
+        const cardBasicInfo = document.createElement("div");
+        cardBasicInfo.classList.add("card-basic-info");
+        baseCard.appendChild(cardBasicInfo);
+
+        const cardTitle = document.createElement("p");
+        cardTitle.classList.add("card-title");
+        cardTitle.textContent = hotel_name;
+        cardBasicInfo.appendChild(cardTitle);
+
+        const priceInfo = document.createElement("p");
+        priceInfo.classList.add("price-info");
+        priceInfo.innerHTML = `<span class="price">${hotel_price}</span> pp | <b>${hotel_occupants}</b> space${hotel_occupants == 1 ? "" : "s"}`;
+        cardBasicInfo.appendChild(priceInfo);
+        
+        const cardDesc = document.createElement("div");
+        cardDesc.classList.add("card-desc");
+        cardBasicInfo.appendChild(cardDesc);
+
+        const cardDescP = document.createElement("p");
+        cardDescP.textContent = hotel_description;
+        cardDesc.appendChild(cardDescP);
+
+        // Card Button
+        const cardButtons = document.createElement("div");
+        cardButtons.classList.add("card-buttons");
+        baseCard.appendChild(cardButtons);
+
+        const buttonAnchor = document.createElement("a");
+        buttonAnchor.classList.add("visit-button")
+        buttonAnchor.href = `{{url_for('hotel.hotels')}}/${hotel_id}`;
+        buttonAnchor.innerHTML = `<p>Visit</p>`;
+        cardButtons.appendChild(buttonAnchor);
+
+        const buttonAnchorBook = document.createElement("a");
+        buttonAnchorBook.classList.add("book-button-card"); // encodeURIComponent(window.location.href);
+
+        {% if session["user"] %}
+            buttonAnchorBook.href = `/book/${hotel_id}`;
+        {% else %}
+             buttonAnchorBook.href = "{{url_for('account.login')}}?redirect=" + encodeURIComponent(`/book/${hotel_id}`);
+        {% endif %};
+        
+        buttonAnchorBook.innerHTML = `<p>book</p>`;
+        cardButtons.appendChild(buttonAnchorBook);
+
+        return baseCard;
+    }
+
+    {% for hotel in hotels %}
+        {% if hotel.roomID > 0 %}
+        $(".hotel-grid-container").append(createCard(
+            "{{hotel.name}}",
+            "{{hotel.description}}",
+            "{{hotel.formatted_price()}}",
+            {{hotel.maxOccupants}},
+            {{hotel.roomID}}
+        ));
+        {% endif %}
+    {% endfor %}
+
+    {# {{hotel.formatted_price()}} {{hotel.maxOccupants}} {% if hotel.maxOccupants == 1 %}{% else %}s{% endif %} #}
+</script>
+{% endblock end_of_page %}

@@ -1,0 +1,222 @@
+{% extends "template.html.j2" %}
+{% set isSafari = hotel.name == "Safari Experience"%}
+{% set visitorWord = 'Visitor' if isSafari else 'Occupant'%}
+{% set dayWord = 'days' if isSafari else 'nights'%}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/hotelpage.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='stylesheets/book.css')}}">
+{% endblock head %}
+
+{% block main %}
+
+
+
+<section class="hotel-info">
+    <div class="hotel-info-container">
+        <div class="hotel-nav">
+            {% if not isSafari %}
+            <a id="back" href="{{url_for('hotel.hotels')}}/{{hotel.roomID}}"><p><i class="fa fa-backward" aria-hidden="true"></i>  Go back - Hotels / {{hotel.name}}</p></a>
+            {% endif %}
+        </div>
+
+        <div class="booking-info">
+            <h2>Booking - {{hotel.name}}</h2>
+            <p>Information inputted will be checked on-site</p>
+        </div>
+
+        {% if not session["user"] %}
+        <div class="booking-content">
+            <div>
+                <h2>Log in</h2>
+                <p>You must <a class="login-button" href="{{url_for('account.login')}}">log in</a> to book a hotel</p>
+            </div>
+        </div>
+
+        {% else %}
+
+        <div class="booking-content">
+            <div id="dates">
+                <h2>Dates</h2>
+
+                <div class="text-input">
+                    <p id="dobClick">Start Date</p>
+                    <input id="start-date" class="date-input" type="date" placeholder="Start Date" name="start-date">
+                </div> 
+
+                <div class="text-input">
+                    <p id="dobClick">End Date</p>
+                    <input id="end-date" class="date-input" type="date" placeholder="End Date" name="end-date">
+                </div> 
+
+                <p class="error-code"></p>
+            </div>
+        </div>
+
+        <div class="booking-content">
+            <div id="occupants">
+                <h2>{{visitorWord}}s</h2>
+
+                <div class="text-input">
+                    <p id="dobClick">Number of {{visitorWord}}s (max: {{hotel.maxOccupants}})</p>
+                    <input id="occupant-count" class="number-input" type="number" placeholder="1" value="1" name="occupant-count" min="1" max="{{hotel.maxOccupants}}">
+                </div> 
+
+                <p class="error-code"></p>
+            </div>
+        </div>
+
+        <div class="booking-content">
+            <div id="finalisation">
+                <h2>Finalisation</h2>
+                <p>Please ensure everything inputted is correct</p>
+                <button type="button" onclick="book()">Confirm</button>
+            </div>
+        </div>
+
+        <div class="booking-content">
+            <div id="finished">
+                <h2>Success!</h2>
+                <p><b>Your total is <span id="final-price"></span></b> | <b>You are booked for <span id="final-nights"></span></b></p>
+                <p>A slot has been booked for you at the {{hotel.name}}</p>
+                <p>Payment is expected on the day, and proof of identity may be required (such as student IDs). Discounts can and will be denied without sufficient proof</p>
+                {# <p class="reference-code">Booking Referece: <span id="final-reference"></span></p> #}
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+</section>
+
+{% endblock main %}
+
+{% block end_of_page %}
+    <script>
+    const DAY_MS = 86400000;
+    const DEBOUNCE_MS = 1000;
+
+    var bookDebounce = false;
+
+    function book() {
+        if (bookDebounce) return;
+        bookDebounce = true;
+
+        var occupants = [];
+
+        for (i = 0; i < $("#occupant-count").val(); i++) {
+            const occupantInfo = {
+                dob : $(`#occupant-${i + 1}-dob`).val(),
+                student : $(`#occupant-${i + 1}-student`).is(':checked'),
+                carer : $(`#occupant-${i + 1}-carer`).is(':checked'),
+                name : $(`#occupant-${i + 1}-name`).val()
+            }
+
+            occupants.push(occupantInfo);
+        }
+
+        const sendData = {
+            startDate: Date.parse($("#start-date").val()),
+            endDate: Date.parse($("#end-date").val()),
+            occupants: occupants,
+            occupantCount: $("#occupant-count").val()
+        }
+
+        $.post("{{url_for('hotel.book', hotel_id = hotel.roomID)}}", sendData, (data) => {
+            setTimeout(() => {bookDebounce = false}, DEBOUNCE_MS);
+
+            $(".booking-content").children("div").css("box-shadow", "0px 0px 5px rgba(0, 0, 0, 0.35)");
+            $(".error-code").css("display", "none");
+
+            console.log(data);
+
+            const success = data["success"];
+            const reason = data["reason"];
+            const type = data["type"] || "banner";
+
+            if (success) {
+                $("#final-price").text(`£${data["data"]["price"] / 100}`);
+                $("#final-nights").text(`${data["data"]["days"]} {{dayWord}}`);
+
+                $(".booking-content:not(:has(#finished))").remove();
+                $("#finished").css("display", "block");
+            }
+
+            if (type == "banner") {
+                console.log(success, type, reason);
+            } else {
+                $('html, body').animate({
+                    scrollTop: $(`#${type}`).offset().top - 25
+                }, 'slow');
+
+                $(`#${type}`).css("box-shadow", "0px 0px 5px rgba(128, 0, 0, 0.55)");
+                const errorTxt = $(`#${type}`).children(".error-code");
+                errorTxt.text(reason);
+                errorTxt.css("display", "block");
+            }
+        })
+    }
+
+    function createOccupant(id) {
+        const vw = "{{visitorWord}}";
+
+        const occupantTemplate = `
+            <div id="occupant-${id}" class="small">
+                <h2>${vw} ${id}</h2>
+
+                <div class="text-input">
+                    <input id="occupant-${id}-name" class="" type="text" placeholder="Full Name" name="occupant-${id}-name">
+                </div> 
+
+                <div class="text-input">
+                    <p id="dobClick">Date of Birth</p>
+                    <input id="occupant-${id}-dob" class="date-input" type="date" placeholder="Date Of Birth" name="occupant-${id}-dob">
+                </div> 
+
+                <div class="text-input">
+                    <p id="dobClick">Student</p>
+                    <input id="occupant-${id}-student" class="date-input" type="checkbox" placeholder="off" value="off" name="occupant-${id}-student">
+                </div> 
+
+                <div class="text-input">
+                    <p id="dobClick">Carer</p>
+                    <input id="occupant-${id}-carer" class="date-input" type="checkbox" placeholder="off" value="off" name="occupant-${id}-carer">
+                </div> 
+
+                <p class="error-code"></p>
+            </div>
+        `
+
+        const bookContent = document.createElement("div");
+        bookContent.classList.add("booking-content");
+        bookContent.innerHTML = occupantTemplate;
+
+        return bookContent;
+    }
+
+    var occupantElements = [];
+
+    function refreshOccupants() {
+        occupantElements.forEach((v) => {
+            v.remove();
+        })
+
+        for (i = 0; i < $("#occupant-count").val(); i++) {
+            const occupentElement = createOccupant(i + 1);
+            occupantElements.push(occupentElement);
+
+            if ($(`#occupant-${i}`).length) {
+                const after = $(`#occupant-${i}`).parent();
+                after.after(occupentElement)
+            } else {
+                const occupants = $("#occupants").parent();
+                occupants.after(occupentElement);
+            }
+
+
+        }
+    }
+
+    $("#occupant-count").change(refreshOccupants)
+    refreshOccupants();
+    </script>
+{% endblock end_of_page %}
